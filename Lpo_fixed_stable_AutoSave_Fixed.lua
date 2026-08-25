@@ -646,7 +646,7 @@ local AutoSkill = false
 
 Tab:AddToggle({
     Name = "Auto M1",
-    Default = false,
+    Default = true,
     Flag = "AutoSave_Toggle_4",
     Save = true,
     Callback = function(Value)
