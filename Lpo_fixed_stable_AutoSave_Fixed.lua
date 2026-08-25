@@ -757,7 +757,7 @@ end
 
 Tab:AddToggle({
     Name = "Aura Kill Energy Blast V2",
-    Default = false,
+    Default = true,
     Save = true,
     Flag = "AutoSave_Toggle_5",
     Callback = function(Value)
@@ -870,7 +870,7 @@ end
 
 Tab:AddToggle({
     Name = "Auto Lock Random Mob",
-    Default = false,
+    Default = true,
     Save = true,
     Flag = "AutoSave_Toggle_6",
     Callback = function(Value)
@@ -1089,7 +1089,7 @@ Tab1:AddToggle({
 })
 Tab2:AddToggle({
     Name = "Kill Dungeon Atom Droid mecha🌳",
-    Default = false,
+    Default = true,
     Save = true,
     Flag = "AutoSave_Toggle_8",
 
@@ -1704,7 +1704,7 @@ local AutoNextArea = false
 
 Tab2:AddToggle({
     Name = "Auto Next Area",
-    Default = false,
+    Default = true,
     Save = true,
     Flag = "AutoSave_Toggle_9",
     Callback = function(Value)
@@ -1798,7 +1798,7 @@ getgenv().AutoStart = false
 
 Tab2:AddToggle({
     Name = "Auto Start",
-    Default = false,
+    Default = true,
     Save = true,
     Flag = "AutoSave_Toggle_10",
     Callback = function(Value)
@@ -1848,7 +1848,7 @@ Tab2:AddToggle({
                                         )
                                     end)
 
-                                    task.wait(4.04)
+                                    task.wait(5.04)
 
                                     if getgenv().AutoStart then
                                         game:GetService("ReplicatedStorage")
@@ -1879,7 +1879,7 @@ local AutoPhePha = false
 
 Tab3:AddToggle({
     Name = "Auto Phê Pha V2",
-    Default = false,
+    Default = true,
     Save = true,
     Flag = "AutoSave_Toggle_11",
     Callback = function(Value)
@@ -1958,7 +1958,7 @@ Tab3:AddToggle({
 --// ================= AUTO CHỌN WEAPON =================
 
 local SelectedTool = 2
-local AutoEquipTools = false
+local AutoEquipTools = true
 
 local Dropdown = Tab3:AddDropdown({
     Name = "Auto equiptools Weaponslot",
@@ -1973,7 +1973,7 @@ local Dropdown = Tab3:AddDropdown({
 
 Tab3:AddToggle({
     Name = "Auto EquipTools",
-    Default = false,
+    Default = true,
     Save = true,
     Flag = "AutoSave_Toggle_13",
     Callback = function(Value)
@@ -2059,7 +2059,7 @@ local ReturnToWorld = game:GetService("ReplicatedStorage")
     :WaitForChild("RF")
     :WaitForChild("ReturnToWorld")
 
-local AutoReturnToWorld = false
+local AutoReturnToWorld = true
 
 -- Tạo Toggle theo Orion
 Tab:AddToggle({
