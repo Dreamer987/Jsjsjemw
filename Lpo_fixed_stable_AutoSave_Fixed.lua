@@ -2049,42 +2049,40 @@ LocalPlayer.CharacterAdded:Connect(function(Character)
         HRP.CFrame = LastDeathPosition
     end
 end)
+local ReturnToWorld = game:GetService("ReplicatedStorage")
+    :WaitForChild("Packages")
+    :WaitForChild("_Index")
+    :WaitForChild("sleitnick_knit@1.4.7")
+    :WaitForChild("knit")
+    :WaitForChild("Services")
+    :WaitForChild("DungeonService")
+    :WaitForChild("RF")
+    :WaitForChild("ReturnToWorld")
+
 local AutoReturnToWorld = false
 
-Tab3:AddToggle({
+-- Tạo Toggle theo Orion
+Tab:AddToggle({
     Name = "Auto Return To World",
-    Default = false,
-    Save = true,
-    Flag = "AutoSave_Toggle_15",
+    Default = true,
     Callback = function(Value)
         AutoReturnToWorld = Value
 
         if Value then
             task.spawn(function()
-                local ReturnToWorld = game:GetService("ReplicatedStorage")
-                    :WaitForChild("Packages")
-                    :WaitForChild("_Index")
-                    :WaitForChild("sleitnick_knit@1.4.7")
-                    :WaitForChild("knit")
-                    :WaitForChild("Services")
-                    :WaitForChild("DungeonService")
-                    :WaitForChild("RF")
-                    :WaitForChild("ReturnToWorld")
-
                 while AutoReturnToWorld do
-                    task.wait(650)
+                    task.wait(600) -- 10 phút
 
-                    -- Kiểm tra lại sau khi đợi để tránh tắt nút mà vẫn kích hoạt
-                    if AutoReturnToWorld then
-                        pcall(function()
-                            ReturnToWorld:InvokeServer()
-                        end)
+                    -- Kiểm tra lại sau khi đợi để tránh tắt rồi vẫn chạy
+                    if not AutoReturnToWorld then
+                        break
                     end
+
+                    pcall(function()
+                        ReturnToWorld:InvokeServer()
+                    end)
                 end
             end)
         end
     end
 })
-
--- Khởi tạo Orion sau khi toàn bộ toggle/dropdown đã được tạo
-OrionLib:Init()
