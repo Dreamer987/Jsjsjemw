@@ -2086,3 +2086,229 @@ Tab:AddToggle({
         end
     end
 })
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Player = Players.LocalPlayer
+
+local SkillRemote = ReplicatedStorage
+    :WaitForChild("Remotes")
+    :WaitForChild("SkillRemote")
+
+--------------------------------------------------
+-- ORION LIB
+--------------------------------------------------
+
+
+
+local AutoDestroySmart = true
+
+
+Tab3:AddToggle({
+    Name = "Auto destory Smart",
+    Default = true,
+    Save = true,
+    Flag = "AutoDestroySmart",
+
+    Callback = function(Value)
+        AutoDestroySmart = Value
+    end
+})
+
+--------------------------------------------------
+-- CHECK CÓ MOB TRONG WORLD MOBS
+--------------------------------------------------
+
+local function HasMobs()
+
+    local WorldMobs = workspace:FindFirstChild("World Mobs")
+
+    if not WorldMobs then
+        return false
+    end
+
+    for _, Mob in ipairs(WorldMobs:GetDescendants()) do
+
+        if Mob:IsA("Model") then
+
+            local Humanoid =
+                Mob:FindFirstChildOfClass("Humanoid")
+
+            if Humanoid
+                and Humanoid.Health > 0
+            then
+                return true
+            end
+        end
+    end
+
+    return false
+end
+
+--------------------------------------------------
+-- CHECK LORD DESTROYER
+--------------------------------------------------
+
+local function HasLordDestroyer()
+
+    local Stats =
+        Player:FindFirstChild("Stats")
+
+    local GamePasses =
+        Stats
+        and Stats:FindFirstChild("GamePasses")
+
+    local LordDestroyer =
+        GamePasses
+        and GamePasses:FindFirstChild("Lord Destroyer")
+
+    if not LordDestroyer then
+        return false
+    end
+
+    local Value = LordDestroyer.Value
+
+    return Value == true
+        or Value == "Yes"
+        or Value == "yes"
+        or Value == 1
+end
+
+--------------------------------------------------
+-- CHECK SKILL 108 CỦA CHÍNH NGƯỜI DÙNG
+--------------------------------------------------
+
+local function IsSkill108Busy()
+
+    local Characters =
+        workspace:FindFirstChild("Characters")
+
+    if not Characters then
+        return false
+    end
+
+    local Character =
+        Characters:FindFirstChild(Player.Name)
+
+    local Status =
+        Character
+        and Character:FindFirstChild("Status")
+
+    local SkillAction =
+        Status
+        and Status:FindFirstChild("SkillAction")
+
+    return SkillAction
+        and SkillAction:FindFirstChild("108")
+        ~= nil
+end
+
+--------------------------------------------------
+-- FIRE SKILL 108
+--------------------------------------------------
+
+local function FireSkill108()
+
+    -- PHẢI CÓ MOB
+    if not HasMobs() then
+        return false
+    end
+
+    -- PHẢI CÓ LORD DESTROYER
+    if not HasLordDestroyer() then
+        return false
+    end
+
+    -- SKILL 108 KHÔNG ĐƯỢC ĐANG BẬN
+    if IsSkill108Busy() then
+        return false
+    end
+
+    local TargetPart =
+        workspace
+        :WaitForChild("World Map")
+        :WaitForChild("New Lobby")
+        :WaitForChild("LobbyBaseplate")
+        :WaitForChild("Grass")
+        :WaitForChild("Model")
+        :WaitForChild("Part")
+
+    local args = {
+        [1] = {
+            ["Camera"] = CFrame.new(
+                1351.746337890625,
+                615.62109375,
+                -3013.663818359375,
+
+                0.9138476252555847,
+                0.3756069242954254,
+                -0.15427908301353455,
+
+                0,
+                0.3799440562725067,
+                0.9250094890594482,
+
+                0.4060573875904083,
+                -0.8453177213668823,
+                0.34721094369888306
+            ),
+
+            ["SkillId"] = "108",
+
+            ["Typ\208\181"] = 1,
+
+            ["Began"] = true,
+
+            ["CFrame"] = CFrame.new(
+                1354.839599609375,
+                595.374755859375,
+                -3020.625244140625,
+
+                0.9302648305892944,
+                1.315218955966202e-08,
+                -0.36688870191574097,
+
+                2.6460771351821677e-08,
+                1,
+                1.0294052543713406e-07,
+
+                0.36688870191574097,
+                -1.0547010731443152e-07,
+                0.9302648305892944
+            ),
+
+            ["Target"] = TargetPart,
+
+            ["Aim"] = Vector3.new(
+                1373.18408203125,
+                595.374755859375,
+                -3067.138427734375
+            )
+        }
+    }
+
+    pcall(function()
+        SkillRemote:FireServer(unpack(args))
+    end)
+
+    return true
+end
+
+--------------------------------------------------
+-- LOOP AUTO DESTROY SMART
+--------------------------------------------------
+
+task.spawn(function()
+
+    while true do
+
+        if AutoDestroySmart then
+            FireSkill108()
+        end
+
+        task.wait(0.5)
+    end
+
+end)
+
+OrionLib:Init()
