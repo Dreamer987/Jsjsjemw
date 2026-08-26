@@ -1693,106 +1693,459 @@ Tab2:AddToggle({
         end)
     end
 })
---// ================= AUTO NEXT AREA =================
-
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
-local Workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
 
 local LocalPlayer = Players.LocalPlayer
-local AutoNextArea = false
+local Workspace = game:GetService("Workspace")
 
-Tab2:AddToggle({
-    Name = "Auto Next Area",
+--==================================================
+-- SETTINGS
+--==================================================
+
+local Speed = 16
+local Walking = false
+local TargetVisual = nil
+
+-- MỞ SẴN
+local AutoWalk = true
+
+--==================================================
+-- RANDOM MOVEMENT
+--==================================================
+
+local RandomDirection = Vector3.zero
+local RandomTimer = 0
+local RandomMode = "Forward"
+
+local function NewRandomAction()
+
+    local Roll = math.random(1, 100)
+
+    if Roll <= 55 then
+
+        RandomMode = "Forward"
+
+    elseif Roll <= 75 then
+
+        RandomMode = "Side"
+
+        local Side =
+            math.random(0, 1) == 0 and -1 or 1
+
+        RandomDirection =
+            Vector3.new(Side, 0, 0)
+
+    elseif Roll <= 90 then
+
+        RandomMode = "Circle"
+
+    else
+
+        RandomMode = "Rotate"
+    end
+
+    RandomTimer =
+        math.random(4, 12) / 10
+end
+
+NewRandomAction()
+
+--==================================================
+-- RANDOM AUTO WALK
+--==================================================
+
+RunService.RenderStepped:Connect(function(dt)
+
+    if not AutoWalk then
+        return
+    end
+
+    if not Walking or not TargetVisual then
+        return
+    end
+
+    local Character = LocalPlayer.Character
+
+    local Humanoid =
+        Character and
+        Character:FindFirstChildOfClass("Humanoid")
+
+    local HRP =
+        Character and
+        Character:FindFirstChild("HumanoidRootPart")
+
+    if not Humanoid or not HRP then
+        return
+    end
+
+    if not TargetVisual.Parent then
+        return
+    end
+
+    Humanoid.WalkSpeed = Speed
+
+    local ToTarget =
+        TargetVisual.Position - HRP.Position
+
+    local Distance =
+        ToTarget.Magnitude
+
+    if Distance <= 5 then
+
+        Humanoid:Move(Vector3.zero, false)
+
+        return
+    end
+
+    RandomTimer -= dt
+
+    if RandomTimer <= 0 then
+        NewRandomAction()
+    end
+
+    -- Hướng tới Visual
+    local Forward = ToTarget.Unit
+
+    -- Hướng ngang
+    local Right =
+        Vector3.new(
+            -Forward.Z,
+            0,
+            Forward.X
+        )
+
+    local MoveDirection
+
+    if RandomMode == "Forward" then
+
+        MoveDirection = Forward
+
+    elseif RandomMode == "Side" then
+
+        MoveDirection = (
+            Forward +
+            Right *
+            RandomDirection.X *
+            0.7
+        ).Unit
+
+    elseif RandomMode == "Circle" then
+
+        MoveDirection = (
+            Forward +
+            Right *
+            math.sin(os.clock() * 3) *
+            0.8
+        ).Unit
+
+    elseif RandomMode == "Rotate" then
+
+        -- Quay tại chỗ
+        Humanoid:Move(Vector3.zero, false)
+
+        HRP.CFrame =
+            HRP.CFrame *
+            CFrame.Angles(
+                0,
+                math.rad(100) * dt,
+                0
+            )
+
+        return
+    end
+
+    Humanoid:Move(MoveDirection, false)
+
+end)
+
+--==================================================
+-- STOP
+--==================================================
+
+local function StopWalking()
+
+    Walking = false
+    TargetVisual = nil
+
+    local Character =
+        LocalPlayer.Character
+
+    local Humanoid =
+        Character and
+        Character:FindFirstChildOfClass("Humanoid")
+
+    if Humanoid then
+        Humanoid:Move(Vector3.zero, false)
+    end
+
+end
+
+--==================================================
+-- ORION TOGGLE
+--==================================================
+
+Tab3:AddToggle({
+    Name = "Auto Next areaV2",
     Default = true,
-    Save = true,
-    Flag = "AutoSave_Toggle_9",
+
     Callback = function(Value)
-        AutoNextArea = Value
+
+        AutoWalk = Value
 
         if not Value then
-            return
+
+            StopWalking()
+
+        else
+
+            NewRandomAction()
+
         end
 
-        task.spawn(function()
-            while AutoNextArea do
-                task.wait(0.1)
+    end
+})
 
-                -- Check số player trong server
-                if #Players:GetPlayers() >= 2 then
-                    TeleportService:Teleport(game.PlaceId, LocalPlayer)
-                    break
-                end
+--==================================================
+-- SPEED SLIDER
+--==================================================
 
-                -- Tìm Next Area
-                local Dungeon = Workspace:FindFirstChild("Dungeon")
-                local Stages = Dungeon and Dungeon:FindFirstChild("Stages")
-                local Stage0 = Stages and Stages:FindFirstChild("0")
-                local NextArea = Stage0 and Stage0:FindFirstChild("NextArea")
-                local Container = NextArea and NextArea:FindFirstChild("Container")
-                local Visual = Container and Container:FindFirstChild("Visual")
+Tab:AddSlider({
+    Name = "Auto Marco.Speed",
+    Min = 1,
+    Max = 100,
+    Default = 16,
+    Increment = 1,
 
-                if not Visual then
-                    continue
-                end
+    ValueName = "Speed",
 
-                -- Check Atom Max
-                local WorldMobs = Workspace:FindFirstChild("World Mobs")
-                local EventMobs = WorldMobs and WorldMobs:FindFirstChild("Event Mobs")
-                local AtomMax = EventMobs and EventMobs:FindFirstChild("Atom Max")
+    Callback = function(Value)
 
-                if AtomMax then
-                    continue
-                end
+        Speed = Value
 
-                -- Teleport tới Next Area
-                local Character = LocalPlayer.Character
-                local HRP = Character and Character:FindFirstChild("HumanoidRootPart")
+    end
+})
 
-                if HRP and Visual:IsA("BasePart") then
-                    HRP.CFrame = Visual.CFrame + Vector3.new(0, 3, 0)
+--==================================================
+-- MAIN LOOP
+--==================================================
 
+task.spawn(function()
+
+    while task.wait(0.1) do
+
+        -- OFF = không làm gì
+        if not AutoWalk then
+            StopWalking()
+            continue
+        end
+
+        --==================================================
+        -- CHECK SERVER PLAYER
+        --==================================================
+
+        if #Players:GetPlayers() >= 2 then
+
+            StopWalking()
+
+            TeleportService:Teleport(
+                game.PlaceId,
+                LocalPlayer
+            )
+
+            break
+        end
+
+        --==================================================
+        -- CHECK DUNGEON
+        --==================================================
+
+        local Dungeon =
+            Workspace:FindFirstChild("Dungeon")
+
+        local Stages =
+            Dungeon and
+            Dungeon:FindFirstChild("Stages")
+
+        local Stage0 =
+            Stages and
+            Stages:FindFirstChild("0")
+
+        local NextArea =
+            Stage0 and
+            Stage0:FindFirstChild("NextArea")
+
+        local Container =
+            NextArea and
+            NextArea:FindFirstChild("Container")
+
+        local Visual =
+            Container and
+            Container:FindFirstChild("Visual")
+
+        if not Visual then
+
+            StopWalking()
+
+            continue
+        end
+
+        --==================================================
+        -- CHECK ATOM MAX
+        --==================================================
+
+        local WorldMobs =
+            Workspace:FindFirstChild("World Mobs")
+
+        local EventMobs =
+            WorldMobs and
+            WorldMobs:FindFirstChild("Event Mobs")
+
+        local AtomMax =
+            EventMobs and
+            EventMobs:FindFirstChild("Atom Max")
+
+        if AtomMax then
+
+            StopWalking()
+
+            continue
+        end
+
+        --==================================================
+        -- WALK RANDOM TO VISUAL
+        --==================================================
+
+        if Visual:IsA("BasePart") then
+
+            TargetVisual = Visual
+            Walking = true
+
+            local Character =
+                LocalPlayer.Character
+
+            local HRP =
+                Character and
+                Character:FindFirstChild(
+                    "HumanoidRootPart"
+                )
+
+            if HRP then
+
+                local Distance =
+                    (Visual.Position - HRP.Position).Magnitude
+
+                if Distance <= 5 then
+
+                    Walking = false
+
+                    local Humanoid =
+                        Character:FindFirstChildOfClass(
+                            "Humanoid"
+                        )
+
+                    if Humanoid then
+                        Humanoid:Move(
+                            Vector3.zero,
+                            false
+                        )
+                    end
+
+                    -- Đợi trước khi interact
                     task.wait(0.8)
 
-                    if not AutoNextArea then
-                        break
-                    end
+                    -- Kiểm tra lại toggle
+                    if not AutoWalk then
 
-                    -- Check player lại
-                    if #Players:GetPlayers() >= 2 then
-                        TeleportService:Teleport(game.PlaceId, LocalPlayer)
-                        break
-                    end
+                        TargetVisual = nil
 
-                    if not Visual.Parent then
                         continue
                     end
 
-                    -- Check Atom Max lại
-                    WorldMobs = Workspace:FindFirstChild("World Mobs")
-                    EventMobs = WorldMobs and WorldMobs:FindFirstChild("Event Mobs")
-                    AtomMax = EventMobs and EventMobs:FindFirstChild("Atom Max")
+                    -- Kiểm tra player
+                    if #Players:GetPlayers() >= 2 then
+
+                        TargetVisual = nil
+
+                        TeleportService:Teleport(
+                            game.PlaceId,
+                            LocalPlayer
+                        )
+
+                        break
+                    end
+
+                    -- Kiểm tra Visual
+                    if not Visual.Parent then
+
+                        TargetVisual = nil
+
+                        continue
+                    end
+
+                    -- Kiểm tra Atom Max lần nữa
+                    WorldMobs =
+                        Workspace:FindFirstChild(
+                            "World Mobs"
+                        )
+
+                    EventMobs =
+                        WorldMobs and
+                        WorldMobs:FindFirstChild(
+                            "Event Mobs"
+                        )
+
+                    AtomMax =
+                        EventMobs and
+                        EventMobs:FindFirstChild(
+                            "Atom Max"
+                        )
 
                     if AtomMax then
+
+                        TargetVisual = nil
+
                         continue
                     end
 
-                    -- Interact Next Area
-                    local Pad = NextArea:FindFirstChild("DungeonNextAreaPad")
-                    local RE = Pad and Pad:FindFirstChild("RE")
-                    local Interact = RE and RE:FindFirstChild("Interact")
+                    --==================================================
+                    -- INTERACT
+                    --==================================================
+
+                    local Pad =
+                        NextArea:FindFirstChild(
+                            "DungeonNextAreaPad"
+                        )
+
+                    local RE =
+                        Pad and
+                        Pad:FindFirstChild("RE")
+
+                    local Interact =
+                        RE and
+                        RE:FindFirstChild("Interact")
 
                     if Interact then
                         Interact:FireServer()
                     end
+
+                    TargetVisual = nil
+
                 end
             end
-        end)
+        end
     end
-})
+
+end)
+
+--==================================================
+-- INIT
+--==================================================
+
+OrionLib:Init()
 
 
---// ================= AUTO START =================
 
 getgenv().AutoStart = false
 
