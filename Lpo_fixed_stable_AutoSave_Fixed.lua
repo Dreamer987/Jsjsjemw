@@ -4,7 +4,7 @@ local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/sigm
 local Window = OrionLib:MakeWindow({
     Name = "Dragon Blox Full 2 V1.11",
     HidePremium = false,
-    SaveConfig = true,
+    SaveConfig = false,
     ConfigFolder = "DragonBloxFull2_AutoSave",
     ConfigFile = "MainConfig"
 })
@@ -758,7 +758,7 @@ end
 Tab:AddToggle({
     Name = "Aura Kill Energy Blast V2",
     Default = true,
-    Save = true,
+    Save = false,
     Flag = "AutoSave_Toggle_5",
     Callback = function(Value)
         AuraEnabled = Value
