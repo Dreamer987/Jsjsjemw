@@ -67,7 +67,7 @@ local ZeroRunId = 0
 Tab1:AddToggle({
     Name = "Auto set Meta",
     Default = false,
-    Save = true,
+    Save = false,
     Flag = "AutoMeta",
     Callback = function(Value)
         AutoMeta = Value
@@ -228,7 +228,7 @@ Tab1:AddToggle({
 Tab1:AddToggle({
     Name = "Auto Pains + Hurts",
     Default = false,
-    Save = true,
+    Save = false,
     Flag = "AutoPainsHurts",
     Callback = function(Value)
         AutoPainsHurts = Value
@@ -379,7 +379,7 @@ Tab1:AddToggle({
 Tab1:AddToggle({
     Name = "Auto set Zero",
     Default = false,
-    Save = true,
+    Save = false,
     Flag = "AutoZero",
     Callback = function(Value)
         AutoZero = Value
@@ -465,7 +465,7 @@ Tab1:AddToggle({
     Name = "Auto pickup Support Farm full set",
     Default = false,
     Flag = "AutoSave_Toggle_1",
-    Save = true,
+    Save = false,
     Callback = function(Value)
         AutoPickup = Value
 
@@ -544,7 +544,7 @@ Tab1:AddToggle({
     Name = "Anti Fall Support Tween",
     Default = false,
     Flag = "AutoSave_Toggle_2",
-    Save = true,
+    Save = false,
     Callback = function(Value)
         FloatEnabled = Value
 
@@ -635,7 +635,7 @@ end)
 Tab1:AddToggle({
 	Name = "Time stop wis",
 	Default = false,
-    Save = true,
+    Save = false,
     Flag = "AutoSave_Toggle_3",
 
 	Callback = function(Value)
@@ -646,9 +646,9 @@ local AutoSkill = false
 
 Tab:AddToggle({
     Name = "Auto M1",
-    Default = true,
+    Default = false,
     Flag = "AutoSave_Toggle_4",
-    Save = true,
+    Save = false,
     Callback = function(Value)
         AutoSkill = Value
 
@@ -757,7 +757,7 @@ end
 
 Tab:AddToggle({
     Name = "Aura Kill Energy Blast V2",
-    Default = true,
+    Default = false,
     Save = false,
     Flag = "AutoSave_Toggle_5",
     Callback = function(Value)
@@ -870,8 +870,8 @@ end
 
 Tab:AddToggle({
     Name = "Auto Lock Random Mob",
-    Default = true,
-    Save = true,
+    Default = false,
+    Save = false,
     Flag = "AutoSave_Toggle_6",
     Callback = function(Value)
         AutoLockRandomMob = Value
@@ -986,7 +986,7 @@ end
 Tab1:AddToggle({
     Name = "Auto kill Zaja",
     Default = false,
-    Save = true,
+    Save = false,
     Flag = "AutoSave_Toggle_7",
     Callback = function(Value)
         AutoZaja = Value
@@ -1089,8 +1089,8 @@ Tab1:AddToggle({
 })
 Tab2:AddToggle({
     Name = "Kill Dungeon Atom Droid mecha🌳",
-    Default = true,
-    Save = true,
+    Default = false,
+    Save = false,
     Flag = "AutoSave_Toggle_8",
 
     Callback = function(Value)
@@ -1888,7 +1888,7 @@ end
 
 Tab3:AddToggle({
     Name = "Auto Next areaV2",
-    Default = true,
+    Default = false,
 
     Callback = function(Value)
 
@@ -2151,8 +2151,8 @@ getgenv().AutoStart = false
 
 Tab2:AddToggle({
     Name = "Auto Start",
-    Default = true,
-    Save = true,
+    Default = false,
+    Save = false,
     Flag = "AutoSave_Toggle_10",
     Callback = function(Value)
         getgenv().AutoStart = Value
@@ -2232,8 +2232,8 @@ local AutoPhePha = false
 
 Tab3:AddToggle({
     Name = "Auto Phê Pha V2",
-    Default = true,
-    Save = true,
+    Default = false,
+    Save = false,
     Flag = "AutoSave_Toggle_11",
     Callback = function(Value)
         AutoPhePha = Value
@@ -2316,7 +2316,7 @@ local AutoEquipTools = true
 local Dropdown = Tab3:AddDropdown({
     Name = "Auto equiptools Weaponslot",
     Default = "2",
-    Save = true,
+    Save = false,
     Flag = "AutoSave_Dropdown_12",
     Options = {"1", "2", "3", "4", "5", "6"},
     Callback = function(Value)
@@ -2326,8 +2326,8 @@ local Dropdown = Tab3:AddDropdown({
 
 Tab3:AddToggle({
     Name = "Auto EquipTools",
-    Default = true,
-    Save = true,
+    Default = false,
+    Save = false,
     Flag = "AutoSave_Toggle_13",
     Callback = function(Value)
         AutoEquipTools = Value
@@ -2369,7 +2369,7 @@ local LastDeathPosition
 Tab3:AddToggle({
     Name = "Hồi sinh tại vị trí đã chết [💨]",
     Default = false,
-    Save = true,
+    Save = false,
     Flag = "AutoSave_Toggle_14",
     Callback = function(Value)
         RespawnAtDeath = Value
@@ -2417,7 +2417,7 @@ local AutoReturnToWorld = true
 -- Tạo Toggle theo Orion
 Tab:AddToggle({
     Name = "Auto Return To World",
-    Default = true,
+    Default = false,
     Callback = function(Value)
         AutoReturnToWorld = Value
 
@@ -2592,7 +2592,7 @@ end
 
 Tab3:AddToggle({
     Name = "Auto destory Smart",
-    Default = true,
+    Default = false,
     Callback = function(Value)
         AutoDestroySmart = Value
 
